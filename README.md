@@ -158,7 +158,8 @@ Go to your GitHub avatar, click `settings` -> `Developer Settings` -> `Personal 
 
 We will SSH into jenkins server, I will use VS Code Remote SSH plugin to connect Jenkins. Once we are connected, we will clone our newly created repo to this server by using TOKEN we have just created.  
 ```sh
-git clone https://<replace_with_your_token>@https://github.com/rumeysakdogan/rd-todo-app.git
+gh repo clone yousefdiab611/Diab_Finall_Poject_DevOps_depi
+
 ```
 
 Next we will copy `nodejs`, `react` and `postgresql` folders given under `todo-app` directory to our repo. Since I am using remote SSH extension, I will drag/drop the files to my VS Code.You can copy the files under `todo-app` in your local and push it to GitHub as well.
