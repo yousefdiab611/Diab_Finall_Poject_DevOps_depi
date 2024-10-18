@@ -1,0 +1,14 @@
+---
+# handlers file for jenkins
+- name: install_jenkins
+  apt:
+    name: jenkins
+    state: present
+
+
+- name: restart and enable service
+  ansible.builtin.systemd_service:
+    state: started
+    daemon_reload: true
+    name: jenkins
+    enabled: true

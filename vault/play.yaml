@@ -1,0 +1,21 @@
+- name: play with vaults
+  hosts: web
+  vars:
+    port_number: 7777
+  tasks:
+    - name: template a file to /etc/file.conf
+      ansible.builtn.user:
+        src: ./template/ports.conf.2
+        dest: /etc/
+   
+- name: install docker and jenkins
+  hosts: jenkins_docker
+  gather_facts: true
+  roles:
+    - role: jenkins
+      tags: jenkins
+
+    - role: docker
+      tags: docker
+
+

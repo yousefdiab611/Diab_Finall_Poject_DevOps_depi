@@ -1,0 +1,86 @@
+---
+# tasks file for docker
+#install docker on ubuntu
+
+- name: Update repositories cache 
+  ansible.builtin.apt:
+    update_cache: yes
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
+
+- name: Install some packages
+  ansible.builtin.apt:
+    name: "{{item}}"
+    state: present
+  loop:
+    - ca-certificates
+    - curl
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
+
+- name: execute some shell commands
+  ansible.builtin.shell:
+    cmd: |
+      install -m 0755 -d /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+      chmod a+r /etc/apt/keyrings/docker.asc
+      echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  register: check_docker
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
+- name: Update repositories cache 
+  ansible.builtin.apt:
+    update_cache: yes 
+  when: ansible_facts['distribution'] == 'Ubuntu' and check_docker.changed == true
+  
+
+- name: Install docker packages
+  ansible.builtin.apt:
+    name: "{{item}}"  
+    state: present  
+  loop:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-buildx-plugin
+    - docker-compose-plugin
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+#install docker on centos
+
+
+- name: Install yum-utils
+  ansible.builtin.yum:
+    name: yum-utils
+    state: present
+  when: ansible_facts['distribution'] == 'Centos'
+
+
+- name: execute some shell command on centos os
+  ansible.builtin.shell:
+    cmd: 
+      yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  when: ansible_facts['distribution'] == 'Centos'
+  register: check_docker_centos
+
+
+- name: Install docker packages
+  ansible.builtin.apt:
+    name: "{{item}}"  
+    state: present    
+  loop:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-buildx-plugin
+    - docker-compose-plugin
+  when: ansible_facts['distribution'] == 'Centos' and check_docker_centos.changed == true
+
+
